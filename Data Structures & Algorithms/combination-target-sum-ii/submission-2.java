@@ -1,0 +1,64 @@
+class Solution_my_own_sol_time_limit_exceeded {
+    private Set<List<Integer>> ans = new HashSet<>();
+    int target;
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        this.target = target;
+        Arrays.sort(candidates);
+        addSubsets(new ArrayList<>(), candidates, 0, 0);
+        return ans.stream().collect(Collectors.toList());
+    }
+    public void addSubsets(ArrayList<Integer> already, int[] nums, int i, int sum) {
+        for(;i<nums.length;i++) {
+            List<Integer> temp = new ArrayList<>(already);
+            temp.add(nums[i]);
+            sum+=nums[i];
+            if(sum==target)
+                ans.add(temp);
+            // ans.add((new ArrayList<>(already)).add(nums[i]));
+            already.add(nums[i]);
+            addSubsets(already, nums, i+1, sum);
+            already.remove(already.size()-1);
+            sum-=nums[i];
+        }
+    }
+}
+
+// Solution seeing half of the Striver's video
+class Solution {
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        //your code goes here
+        Arrays.sort(candidates);
+        List<List<Integer>> ans = new ArrayList<>();
+        addCombinations(0, new ArrayList<>(), ans, candidates, target);
+        return ans;
+    }
+
+    public void addCombinations(int i, List<Integer> list, List<List<Integer>> ans, int[] nums, int k) {
+        if(k<0) { // optimisation
+            // here after it is not possible
+            return;
+        }
+        if(k==0) {
+            ans.add(new ArrayList<>(list));
+            return;
+        }
+        if(i==nums.length) {
+            return;
+        }
+
+        // not take it 
+        // here we need to skip to the next element which is not equal to current element
+        for(int j=i+1; j<nums.length; j++){
+            if(nums[j] != nums[i]) {
+                addCombinations(j, list, ans, nums, k);
+                break;
+            }
+        }
+        
+
+        // take it
+        list.add(nums[i]);
+        addCombinations(i+1, list, ans, nums, k-nums[i]);
+        list.remove(list.size()-1);
+    }
+}
